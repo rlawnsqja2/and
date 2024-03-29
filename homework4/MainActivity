@@ -1,0 +1,26 @@
+package com.homework.home4
+
+import com.homework.home4.databinding.ActivityMainBinding
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import android.widget.EditText
+import java.lang.Integer.parseInt
+
+class MainActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        //setContentView(R.layout.activity_main)
+        var vb = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(vb.root);
+
+        var num1:String
+        var num2:String
+        var result:Int
+        vb.btnEnd.setOnClickListener {
+            num1 = vb.editNum1.getText().toString();
+            num2 = vb.editNum2.getText().toString();
+            result = Integer.parseInt(num1) + Integer.parseInt(num2)
+            vb.tvTextView.setText(result.toString());
+        }
+    }
+}
