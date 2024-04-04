@@ -1,0 +1,30 @@
+package kr.ac.dmu.ai040404
+
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import kr.ac.dmu.ai040404.databinding.ActivityMainBinding
+
+class MainActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        //setContentView(R.layout.activity_main)
+        val binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        var iV1 : Int
+        var iV2 : Int
+        var iResult : Int
+
+        binding.btnResult.setOnClickListener(){
+            iV1 = binding.editV1.text.toString().toInt()
+            iV2 = binding.editV2.text.toString().toInt()
+            if(iV1 > iV2){
+                iResult = iV1 - iV2
+            }
+            else{
+                iResult = iV2 - iV1
+            }
+            binding.tvResult.text = iResult.toString()
+        }
+    }
+}
