@@ -25,6 +25,19 @@ class MainActivity : AppCompatActivity() {
                 iResult = iV2 - iV1
             }
             binding.tvResult.text = iResult.toString()
+
+            for( i in 1 .. 10){
+                binding.textView2.text = binding.textView2.text.toString().plus("*")
+            }
+            for(index in 1..10 step 2){
+                binding.textView2.text = binding.textView2.text.toString().plus("?")
+            }
+            for(index in 10 downTo 1 step 2){
+                binding.textView2.text = binding.textView2.text.toString().plus("?")
+            }
+            for( i in 1 until 10){
+                binding.textView2.text = binding.textView2.text.toString().plus("*")
+            }
         }
     }
 }
