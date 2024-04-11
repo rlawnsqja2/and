@@ -1,0 +1,90 @@
+package kr.ac.dmu.ai041101
+
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import android.util.Log
+import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import kr.ac.dmu.ai041101.databinding.ActivityMainBinding
+import kotlin.reflect.KMutableProperty1
+
+class MainActivity : AppCompatActivity() {
+
+    // 클래스 범위의 변수 선언
+    var selectedOp: Int = 0
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        //setContentView(R.layout.activity_main)
+
+        // viewBinding 설정
+        var binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        // 버튼에 이벤트 등록
+        binding.btnCalc.setOnClickListener(){
+            binding.tvResult.text = when{
+                selectedOp == 0 -> {
+                        (binding.editNum1.text.toString().toInt() +
+                            binding.editNum2.text.toString().toInt()).toString()
+                    }
+
+
+                selectedOp == 1 -> {
+                        (binding.editNum1.text.toString().toInt() -
+                                binding.editNum2.text.toString().toInt()).toString()
+                    }
+
+
+                selectedOp == 2 -> {
+                        (binding.editNum1.text.toString().toInt() *
+                                binding.editNum2.text.toString().toInt()).toString()
+                    }
+
+                else -> {
+                    if(binding.editNum2.text.toString().toInt() != 0){
+                        (binding.editNum1.text.toString().toInt() /
+                                binding.editNum2.text.toString().toInt()).toString()
+                    } else {
+                        "N/A"
+                    }
+                }
+            }
+        }
+
+        // 1. resources에 정의된 string-array를 읽어온다.
+        val items = resources.getStringArray(R.array.itemArray)
+        //var items2 = arrayOf("+", "-", "*", "/")
+        // 두 번째 방법의 문제는 - 1) 같은 값을 여러 번 사용할 때 - 여러 번 수정해야 하는 문제
+
+        // 2. 어댑터 만들기
+        val myAdapter = ArrayAdapter(this, //만들 장소
+        android.R.layout.simple_spinner_dropdown_item, // spinner의 모양 결정
+        items // spinner에 넣을 데이터
+        )
+
+        // 3. 어댑터를 spinner 컴포넌트와 연결
+        binding.spinner.adapter = myAdapter
+
+        // 4. spinner에 이벤트 리스너 설정
+        binding.spinner.onItemSelectedListener =
+            object: AdapterView.OnItemSelectedListener {
+                // 정의 해야할 메서드가 둘 이상일 때
+                override fun onNothingSelected( parent: AdapterView<*>){
+                    // do nothing
+                }
+                override fun onItemSelected(
+                        parent: AdapterView<*>?, // spinner의 부모 클래스 컴포넌트
+                        view : View?,   // spinner에서 실제 내용을 보여주는 컴포넌트
+                        position: Int,  // 선택한 항목의 위치값으로 0부터 시작
+                        id: Long) {
+                    Log.d("check", "parent의 타입은 ${parent.toString()}")
+                    Log.d("check", "pview의 타입은 ${view.toString()}")
+                    Log.d("check", "선택한 항목은 ${position}입니다.")
+                    Log.d("check", "id의 타입은 ${id}")
+                    selectedOp = position
+                }
+            }
+    }
+}
