@@ -1,0 +1,58 @@
+package kr.au.dmu.aihomework
+
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.SpinnerAdapter
+import kr.au.dmu.aihomework.databinding.ActivityMainBinding
+import java.text.DateFormatSymbols
+
+class MainActivity : AppCompatActivity() {
+    var selectedOp: Int = 0
+
+    lateinit var binding : ActivityMainBinding
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        //setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        binding.button.setOnClickListener(){
+             if(selectedOp == 0) {
+                 binding.imageView2.visibility = View.INVISIBLE
+                 binding.imageView1.visibility = View.VISIBLE
+             }
+             else{
+                 binding.imageView1.visibility = View.INVISIBLE
+                 binding.imageView2.visibility = View.VISIBLE
+             }
+        }
+
+        val Im = DateFormatSymbols().Image
+        var da = resources.getStringArray(R.array.items)
+        var myAdapter = ArrayAdapter(this, //만들 장소
+            android.R.layout.simple_spinner_dropdown_item, // spinner의 모양 결정
+        )
+        binding.spinner.adapter = myAdapter
+
+        binding.spinner.onItemSelectedListener = object: AdapterView.OnItemSelectedListener{
+            override fun onNothingSelected( parent: AdapterView<*>){
+            }
+            override fun onItemSelected(
+                parent: AdapterView<*>?, // spinner의 부모 클래스 컴포넌트
+                view : View?,   // spinner에서 실제 내용을 보여주는 컴포넌트
+                position: Int,  // 선택한 항목의 위치값으로 0부터 시작
+                id: Long)
+            {
+                selectedOp = position
+            }
+        }
+
+
+
+
+
+    }
+}
