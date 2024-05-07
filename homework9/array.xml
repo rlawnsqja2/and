@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="image">SpinnerHomework</string>
-    <string-array name="items">
-    <item>이미지1</item>
-    <item>이미지2</item>
-    </string-array>
-</resources>
+    <resources>
+        <string name="image">MySpinner</string>
+        <string-array name="items">
+            <item>이미지1</item>
+            <item>이미지2</item>
+        </string-array>
+    </resources>
 //values폴더 하부 생성
