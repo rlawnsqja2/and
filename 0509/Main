@@ -16,29 +16,29 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.imageButton.setOnClickListener(){
+        binding.imageButton.setOnClickListener() {
             Toast.makeText(this, "이미지버튼 클릭했다", Toast.LENGTH_LONG).show()
         }
 
-        binding.checkBox.setOnClickListener(){
+        binding.checkBox.setOnClickListener() {
             // checkbox 클릭여부 확인
             // checkbox 선택, 해제 구분 안됨
             // binding.checkBox.isChecked 속성은 체크 - true, un체크 - false
             checkBoxClicked(binding.checkBox.id)
             // findViewById
         }
-        binding.checkBox2.setOnClickListener(){
+        binding.checkBox2.setOnClickListener() {
             checkBoxClicked(binding.checkBox2.id)
         }
 
-        binding.radioGroup.setOnCheckedChangeListener(){ group, checkId ->
+        binding.radioGroup.setOnCheckedChangeListener() { group, checkId ->
             Log.d("check", "$group")
             Log.d("check", "$checkId")
             var radioResult = ""
-            when( checkId ){
+            when (checkId) {
                 // viewBinding에서 컴포넌트 id 확인
                 binding.radioButton.id -> {
-                //binding.radioButton.isChecked{
+                    //binding.radioButton.isChecked{
                     radioResult = "첫번째 라디오"
                 }
                 // viewBinding을 사용하지 않을 때 컴포넌트 id 확인
@@ -46,45 +46,61 @@ class MainActivity : AppCompatActivity() {
                     radioResult = "두번째 라디오"
                 }
             }
-            var builder = AlertDialog.Builder( this)
+            var builder = AlertDialog.Builder(this)
             builder.setTitle("RadioButtom Result")
             builder.setMessage(radioResult)
             builder.show()
         }
-        binding.toggleButton.setOnClickListener(){
-            var msg : String
-            if(binding.toggleButton.isChecked){
+        binding.toggleButton.setOnClickListener() {
+            var msg: String
+            if (binding.toggleButton.isChecked) {
                 msg = "토글버튼 ON"
                 binding.toggleButton.setText(msg)
             } else {
                 msg = "토글버튼 OFF"
                 binding.toggleButton.setText(msg)
             }
-            var builder = AlertDialog.Builder( this)
+            var builder = AlertDialog.Builder(this)
             builder.setTitle("토글버튼 결과")
             builder.setMessage(msg)
             builder.show()
         }
+        binding.switch1.setOnClickListener() {
+            var swt: String
+            if (binding.toggleButton.isChecked) {
+                swt = "스위치버튼 ON"
+                binding.toggleButton.setText(swt)
+            } else {
+                swt = "스위치버튼 OFF"
+                binding.toggleButton.setText(swt)
+            }
+            var builder = AlertDialog.Builder(this)
+            builder.setTitle("스위치버튼 결과")
+            builder.setMessage(swt)
+            builder.show()
+        }
+
         // radio 버튼은 이벤트 설정을 radioGroup에 설정
         // 함수 몸체가 람다형식 인수 -> 함수바디
     } // onCreate
 
 
-    fun checkBoxClicked( id: Int ) {
-        var result : Int = 0
+    fun checkBoxClicked(id: Int) {
+        var result: Int = 0
         Log.d("check", "함수에 전달된 ID는 ${id}")
         Log.d("check", "첫 번째 checkbox의 id는 ${R.id.checkBox}")
         Log.d("check", "두 번째 checkbox의 id는 ${R.id.checkBox2}")
-        when(id){
+        when (id) {
             R.id.checkBox -> {
-                if(binding.checkBox.isChecked){
+                if (binding.checkBox.isChecked) {
                     checkResult += 1
                 } else {
                     checkResult -= 1
                 }
             }
+
             R.id.checkBox2 -> {
-                if(binding.checkBox2.isChecked){
+                if (binding.checkBox2.isChecked) {
                     checkResult += 2
                 } else {
                     checkResult -= 2
@@ -93,11 +109,22 @@ class MainActivity : AppCompatActivity() {
         }
         //Toast.makeText(this, "${ checkResult }", Toast.LENGTH_LONG).show()
 
-        when(checkResult){
-            0 -> { Toast.makeText(this, "선택 없음", Toast.LENGTH_SHORT).show() }
-            1 -> { Toast.makeText(this, "선택 1", Toast.LENGTH_SHORT).show() }
-            2 -> { Toast.makeText(this, "선택 2", Toast.LENGTH_SHORT).show() }
-            3 -> { Toast.makeText(this, "선택 1과 선택 2", Toast.LENGTH_SHORT).show() }
+        when (checkResult) {
+            0 -> {
+                Toast.makeText(this, "선택 없음", Toast.LENGTH_SHORT).show()
+            }
+
+            1 -> {
+                Toast.makeText(this, "선택 1", Toast.LENGTH_SHORT).show()
+            }
+
+            2 -> {
+                Toast.makeText(this, "선택 2", Toast.LENGTH_SHORT).show()
+            }
+
+            3 -> {
+                Toast.makeText(this, "선택 1과 선택 2", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 }
