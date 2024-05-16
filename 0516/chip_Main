@@ -1,0 +1,82 @@
+package kr.ac.dmu.ai051601
+
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import android.widget.Toast
+import kr.ac.dmu.ai051601.databinding.ActivityMainBinding
+
+class MainActivity : AppCompatActivity() {
+    // class 범위의 속성 선언
+    private lateinit var binding : ActivityMainBinding
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        //setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        binding.chip1.setOnClickListener(){
+            showInputChip()
+        }
+        binding.chip2.setOnClickListener(){
+            showInputChip()
+        }
+        binding.chip3.setOnClickListener(){
+            showInputChip()
+        }
+        binding.chip4.setOnClickListener(){
+            showFilterChip()
+        }
+        binding.chip5.setOnClickListener(){
+            showFilterChip()
+        }
+        binding.chip6.setOnClickListener(){
+            showFilterChip()
+        }
+        binding.chip7.setOnClickListener(){
+            showChoiceChip()
+        }
+        binding.chip8.setOnClickListener(){
+            showChoiceChip()
+        }
+        binding.chip9.setOnClickListener(){
+            showChoiceChip()
+        }
+        binding.chip10.setOnClickListener(){
+            showActionChip()
+        }
+        binding.chip11.setOnClickListener(){
+            showActionChip()
+        }
+        binding.chip12.setOnClickListener(){
+            showActionChip()
+        }
+    } // onCreate
+
+    fun showInputChip(){
+        Toast.makeText(this,
+                "chip1: ${binding.chip1.isChecked}"+
+                "chip2: ${binding.chip2.isChecked}"+
+                "chip3: ${binding.chip3.isChecked}", Toast.LENGTH_SHORT).show()
+    }
+
+    fun showFilterChip(){
+        Toast.makeText(this,
+            "chip4: ${binding.chip4.isChecked}"+
+                    "chip5: ${binding.chip5.isChecked}"+
+                    "chip6: ${binding.chip6.isChecked}", Toast.LENGTH_SHORT).show()
+    }
+
+    fun showChoiceChip(){
+        Toast.makeText(this,
+            "chip7: ${binding.chip7.isChecked}"+
+                    "chip8: ${binding.chip8.isChecked}"+
+                    "chip9: ${binding.chip9.isChecked}", Toast.LENGTH_SHORT).show()
+    }
+
+    fun showActionChip(){
+        Toast.makeText(this,
+            "chip10: ${binding.chip10.isChecked}"+
+                    "chip11: ${binding.chip11.isChecked}"+
+                    "chip12: ${binding.chip12.isChecked}", Toast.LENGTH_SHORT).show()
+    }
+}
