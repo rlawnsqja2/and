@@ -1,0 +1,88 @@
+package kr.ac.dmu.a2024051602
+
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import android.os.Environment
+import android.text.Editable
+import android.text.TextWatcher
+import android.util.Log
+import kr.ac.dmu.a2024051602.databinding.ActivityMainBinding
+import java.io.File
+import java.io.FileOutputStream
+import java.security.KeyStore.TrustedCertificateEntry
+import java.time.LocalDateTime
+
+class MainActivity : AppCompatActivity() {
+
+    // class 범위의 속성 정의
+    private lateinit var binding: ActivityMainBinding
+
+    // 저장 여부를 확인하는 속성
+    private var isSaved = false
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        //setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        // '새 메모' 버튼 이벤트
+        binding.button.setOnClickListener() {
+            if(isSaved) { // 저장되어 있는 경우
+                //binding.editText.setText("")
+            } else { // 저장 안되어 있는 경우
+                //파일 저장
+                saveToFile()
+                //binding.editText.setText("")
+            }
+        }
+
+        // '저장' 버튼 이벤트
+        binding.button2.setOnClickListener(){
+            saveToFile()
+        }
+
+        // editTextText 컴포넌트 이벤트 처리
+        binding.editText.addTextChangedListener(object : TextWatcher{
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                Log.d("check", "내용 변경 전")
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                Log.d("check", "내용 변경 중")
+                isSaved = false
+                binding.textView2.setText(binding.textView2.text.toString() + "*")
+
+                // var dataAndTime = System.currentTimeMillis()
+
+            }
+            override fun afterTextChanged(s: Editable?) {
+                Log.d("check", "내용 변경 후")
+            }
+        })
+
+    } // onCreate
+
+    fun saveToFile() {
+        // editText 컴포넌트의 내용을 파일로 저장
+        isSaved = true
+        binding.textView2.text = binding.textView2.text.toString() + "&"
+
+        var dateAndTime = System.currentTimeMillis()
+
+        var outputFile: FileOutputStream =
+            openFileOutput(dateAndTime.toString() + ".txt", MODE_PRIVATE)
+        outputFile.write(binding.editText.text.toString().toByteArray())
+        outputFile.close()
+
+        // 파일 저장 2
+        // base 디렉토리 설정
+        var baseDir =
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString()
+        // var filePath = "${baseDir}/${dateAndTime}"
+        var file = File(baseDir, dateAndTime.toString())
+        val fos = FileOutputStream(file)
+        fos.write(binding.editText.text.toString().toByteArray())
+        fos.close()
+    }
+}
