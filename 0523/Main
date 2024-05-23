@@ -1,0 +1,68 @@
+package kr.ac.dmu.ai052301
+
+import android.content.Intent
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import android.util.Log
+import kr.ac.dmu.ai052301.databinding.ActivityMainBinding
+
+class MainActivity : AppCompatActivity() {
+    // class 범위의 변수 - 클래스 속성
+    private lateinit var binding: ActivityMainBinding
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        //setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        Log.d("myCheck", "MainActivity의 onCreate 실행")
+
+        // ' 앱 정보 보기' 버튼에 이벤트 설정
+        binding.button.setOnClickListener(){
+            // Activity 이동을 위해서 Intent 객체 사용
+            var intent = Intent(this, InfoActivity::class.java)
+            // intent에 데이터 넣기
+            intent.putExtra("name", "Main에서 보내는 데이터")
+            intent.putExtra("number", 200)
+            startActivity(intent)  // 이동
+            Log.d("myCheck", "앱 정보 보기 버튼 클릭하다")
+        }
+    } // oncreate
+
+    override fun onStart() {
+        super.onStart()
+        Log.d("myCheck", "MainActivity의 onStart 첫 번째 실행")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d("myCheck", "MainActivity의 onResume 실행")
+        // onCreate -> onStart -> onResume
+        binding.textView2.text = MyApplication.INSTANCE.gname
+        binding.textView2.text = binding.textView2.text.toString() + MyApplication.INSTANCE.intData
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d("myCheck", "MainActivity의 onPause 실행")
+        // 데이터 처리 코드 넣지 않는다.
+        // 순간 지나간다.
+    }
+
+    override fun onStop(){
+        super.onStop()
+        Log.d("myCheck", "MainActivity의 onStop 실행")
+        // Activity 이동 후, 정리 할 코드가 있다면 onStop에서
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d("myCheck", "MainActivity의 onDestroy 실행")
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        Log.d("myCheck", "MainActivity의 onRestart 실행")
+    }
+
+
+}
