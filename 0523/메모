@@ -1,0 +1,15 @@
+처음 실행한 화면 이외에는 화면 넘어가면 그 화면들은 전부 Destroy가 떨어진다
+Main onCreate
+Main onStart
+Main onResume
+Main onPause
+Info onCreate
+Info onStart
+Info onResume
+Main onStop
+Info onPause
+Main onRestart
+Main onStart
+Main onResume
+Info onStop
+Info onDestroy 
