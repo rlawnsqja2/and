@@ -1,0 +1,62 @@
+package kr.ac.dmu.ai052301
+
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import android.util.Log
+import kr.ac.dmu.ai052301.databinding.ActivityInfoBinding
+
+class InfoActivity : AppCompatActivity() {
+
+    // class 속성
+    private lateinit var binding: ActivityInfoBinding
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        //setContentView(R.layout.activity_info)
+        binding = ActivityInfoBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        Log.d("myCheck", "InfoActivity의 onCreate 실행")
+
+        binding.textView.text = "이 앱은 \n인공지능학과에서 \n수업 시간에 만든 \n예제 앱이다."
+
+        if(intent.hasExtra("name")){
+            binding.textView.text = binding.textView.text.toString() + "\n\n" + intent.getStringExtra("name")
+        }
+        if(intent.hasExtra("number")){
+            binding.textView.text = binding.textView.text.toString() + "\n\n" +intent.getIntExtra("number", 0)
+        }
+
+        binding.button2.setOnClickListener(){
+            finish()
+        }
+    } // onCreate
+    override fun onStart() {
+        super.onStart()
+        Log.d("myCheck", "InfoActivity의 onStart 실행")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d("myCheck", "InfoActivity의 onResume 실행")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d("myCheck", "InfoActivity의 onPause 실행")
+    }
+
+    override fun onStop(){
+        super.onStop()
+        Log.d("myCheck", "InfoActivity의 onStop 실행")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d("myCheck", "InfoActivity의 onDestroy 실행")
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        Log.d("myCheck", "InfoActivity의 onRestart 실행")
+    }
+
+}
