@@ -1,2 +1,5 @@
 시험문제 SharedPreferences 사용
 intent 사용보다 SharedPreferences 사용이 편하다
+2개 activity만 사용
+MainActivity, FilelistActivity만 사용
+Filename은 main에서 Fragment (editText, editText Button 사용)
