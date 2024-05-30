@@ -1,0 +1,327 @@
+package com.android.memo_file
+
+import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Intent
+import android.content.SharedPreferences
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import android.os.Environment
+import android.text.Editable
+import android.text.TextWatcher
+import android.util.Log
+import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import com.android.memo_file.databinding.ActivityMainBinding
+import com.google.android.material.internal.TextWatcherAdapter
+
+import java.io.BufferedReader
+import java.io.File
+import java.io.FileOutputStream
+import java.io.FileReader
+
+//import java.time.LocalDateTime
+
+class MainActivity : AppCompatActivity() {
+
+    lateinit var binding:ActivityMainBinding
+    var isSaved = false
+    var fileNameToSave = "New"
+    var fileNameToOpen = ""
+    var state = 1
+
+    lateinit var intentFilename: Intent
+    lateinit var intentFilelist: Intent
+
+    lateinit var filenameActivityResult: ActivityResultLauncher<Intent>
+    lateinit var filelistActivityResult: ActivityResultLauncher<Intent>
+    lateinit var sharedpreferences: SharedPreferences
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        //setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+
+        // sharedpreference에 데이터 넣고 확인하기
+        MyApplication.preferences.setString("MyKey", "MainActivity에서 넣은 값이다.")
+        val temp = MyApplication.preferences.getString("MyKey", "")
+        Log.d("myCheck", "SharedPreference에서 MyKey의 값은 ${temp}")
+        //
+
+        Log.d("myCheck", "MainActivity의 onCreate 메서드 실행")
+
+        state = 1 // onCreate
+
+        // 파일을 저장할 위치 확인
+        //Log.d("checkValue", "getDataDirectory의 결과는 ${Environment.getDataDirectory().toString()}")    //    /data 폴더
+        //Log.d("checkValue", "getExternalStorageDirectory의 결과는 ${Environment.getExternalStorageDirectory().toString()}")
+        //Log.d("checkValue", "getStorageDirectory의 결과는 ${Environment.getStorageDirectory().toString()}")
+
+        // '파일 저장' 버튼 비활성화
+        binding.button2.isEnabled = false
+        // 파일 이름 표시하는 TextView2에 이름을 'New'로 표시
+        binding.textView2.text = fileNameToSave  // 시작할 때는 New
+
+        // 화면 이동을 위한 intent 초기화
+        intentFilename = Intent(this, FilenameActivity::class.java)
+        intentFilelist = Intent(this, FilelistActivity::class.java)
+
+        // FilenameActivity를 호출한 뒤에 반환되는 값을 처리하는 callback
+        filenameActivityResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            // callback 실행 순서가 onRestart() 뒤가 된다.
+            if(it.resultCode == RESULT_OK ) {
+                fileNameToSave = it.data?.getStringExtra("fileNameToSave")?:""
+                Log.d("myCheck", "FilenameActivity에서 MainActivity로 돌아왔다.")
+                Log.d("myCheck", "FileNameActivity에서 돌려준 파일 이름은 ${fileNameToSave}")
+            }
+        }
+        filelistActivityResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            // callback 실행 순서가 onRestart() 뒤가 된다.
+            if(it.resultCode == RESULT_OK) {
+                fileNameToOpen = it.data?.getStringExtra("fileNameToOpen")?:""
+                binding.textView2.text = fileNameToOpen
+                fileNameToSave = fileNameToOpen
+                // 선택한 파일 open해서 editText 컴포넌트에 보여주기
+                //openSelectedFile()
+                Log.d("myCheck", "FileListActivity에서 돌아오다.")
+            }
+        }
+
+        // 이벤트 처리를 위한 함수 등록
+        // '새 메모' 버튼
+        binding.button.setOnClickListener() {
+            if (!isSaved && binding.editTextText.text.length != 0) {
+                // 내용이 저장되지 않은 경우
+                if( fileNameToSave == "New") {   // 파일 이름이 'New'이면 한 번도 저장되지 않은 경우
+                    // 파일 이름을 받아오기 위한 intent 호출
+                    getFilenameFromIntent()
+                } else {                        // 파일 이름이 'New'가 아니기 때문에 파일 이름은 이미 부여된 경우
+                    saveToFile()
+                    binding.editTextText.setText("")
+                    fileNameToSave = "New"
+                    binding.textView2.text = fileNameToSave
+                }
+            } else {
+                // 내용이 저장된 경우에는 다른 작업 없이 정리
+                binding.editTextText.setText("")
+                fileNameToSave = "New"
+                binding.textView2.text = fileNameToSave
+            }
+            state = 2
+            Log.d("myCheck", "MainActivity에서 \'새 메모\' 버튼 클릭")
+        }
+
+        // '파일 저장' 버튼
+        binding.button2.setOnClickListener() {
+            if( fileNameToSave == "New") {
+                // 한 번도 저장되지 않았기 때문에 파일 이름을 받아오기 위한 intent 호출
+                 getFilenameFromIntent()  // 이 경우 저장되지 않은 상태로 진행
+            } else {
+                saveToFile()
+            }
+            // 파일 이름이 결정된 뒤에 파일 저장을 위한 함수 호출
+            //saveToFile()
+            state = 4
+            // 파일이 저장된 뒤에 '파일 저장' 버튼 비활성화
+            binding.button2.isEnabled = false
+        }
+
+        // '파일 열기' 버튼 이벤트
+        binding.button3.setOnClickListener() {
+            // 파일을 열기 전에 현재 작업 중인 내용의 저장 여부 처리
+            if (!isSaved && binding.editTextText.text.length != 0) {
+                // 내용이 저장되지 않은 경우
+                if( fileNameToSave == "New") {   // 파일 이름이 'New'이면 한 번도 저장되지 않은 경우
+                    // 파일 이름을 받아오기 위한 intent 호출
+                    getFilenameFromIntent()
+                    state = 10
+                } else {                        // 파일 이름이 'New'가 아니기 때문에 파일 이름은 이미 부여된 경우
+                    saveToFile()
+                    // 이전 내용 마무리 됨
+                    // 파일 열기 작업
+                    showFilelistIntent()
+                    state = 8
+                }
+            } else {
+                // 내용이 저장된 경우에는 파일 열기 작업
+                showFilelistIntent()
+                state = 8
+            }
+            // FileOpen을 진행하기 위해 파일 이름을 받아올 Inent 호출
+
+            //state = 4
+            //Toast.makeText(this, "${fileNameToOpen}", Toast.LENGTH_SHORT).show()
+            Log.d("myCheck", "MainActivity에서 \'파일 열기\' 버튼 클릭")
+
+        }
+
+        // editTextText 콤포넌트에 내용이 입력되는 것을 처리하는 이벤트
+        // TextWatcher는 인터페이스이기 때문에 필요한 모든 메서드를 override해야 한다.
+        binding.editTextText.addTextChangedListener ( object: TextWatcher {
+            // 기본 3가지 메서드를 overriding 해야 한다.
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int)     {
+                // 아무 것도 없음
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                //
+                isSaved = false // editText 컴포넌트에서 내용이 변경된 이후 저장되지 않음을 설정
+                // 메모장의 내용이 변경되었기 때문에 '파일 저장' 버튼 활성화
+                binding.button2.isEnabled = true
+                val tmp = binding.textView2.text.toString().substring(binding.textView2.text.toString().length - 1)
+                if( tmp != "*") {
+                    binding.textView2.text = binding.textView2.text.toString() + "*"
+                }
+                if(state == 8 || state == 10) {
+                    binding.textView2.text = fileNameToOpen
+                    state = 1
+                }
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                // 아무 것도 없음
+            }
+        })
+
+        /*
+        // 위의 binding.editTextText.addTextChangedListener ( object: TextWatcher { ... })와 같다.
+        // Interface인 TextWatcher를 구현한 클래스인 TextWatcherAdapter 사용
+        binding.editTextText.addTextChangedListener(@SuppressLint("RestrictedApi")
+            object: TextWatcherAdapter() {
+                override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                    //
+                    isSaved = false // editText 컴포넌트에서 내용이 변경된 이후 저장되지 않음을 설정
+                    // 메모장의 내용이 변경되었기 때문에 '파일 저장' 버튼 활성화
+                    binding.button2.isEnabled = true
+                    val tmp = binding.textView2.text.toString().substring(binding.textView2.text.toString().length - 1)
+                    if( tmp != "*") {
+                        binding.textView2.text = binding.textView2.text.toString() + "*"
+                    }
+                    if(state == 8 || state == 10) {
+                        binding.textView2.text = fileNameToOpen
+                        state = 1
+                    }
+                }
+        })
+        */
+    } // onCreate
+
+    override fun onResume() {
+        super.onResume()
+        //Toast.makeText(this, "onResume 실행 [${state}]", Toast.LENGTH_SHORT).show()
+        Log.d("myCheck", "MainActivity의 onResume 메서드 실행, state는 ${state}/isSaved=[${isSaved.toString()}]")
+        when( state ) {
+            1 -> {   // 처음 시작한 경우, 초기 상태로 시작하기 때문에 아무것도 하지 않음
+                Log.d("myCheck", "MainActivity의 onResume 메서드 실행(1) - 초기 상태")
+            }
+
+            2 -> {  // '새 메모' 버튼을 클릭한 경우
+                Log.d("myCheck", "MainActivity의 onResume 메서드 실행(2), 파일 이름은 ${fileNameToSave}")
+                if(!isSaved && binding.editTextText.text.length != 0) {
+                    // 현재 내용 저장
+                    saveToFile()
+                }
+                binding.editTextText.setText("")
+                fileNameToSave = "New"
+                binding.textView2.text = fileNameToSave
+            }
+            4 -> {  // '파일 저장' 버튼을 클릭한 경우
+                Log.d("myCheck", "MainActivity의 onResule 메서드 실행(4), 파일 이름은 ${fileNameToSave}")
+                if(!isSaved || binding.editTextText.text.length != 0) {
+                    saveToFile()
+                }
+                binding.textView2.text = fileNameToSave
+            }
+            8 -> {  // '파일 열기' 버튼을 클릭한 경우
+                Log.d("myCheck", "MainActivity의 onResume 메서드 실행(8), 파일 이름은 ${fileNameToOpen}")
+                openSelectedFile()
+                binding.button2.isEnabled = false
+            }
+            10 -> {
+                Log.d("myCheck", "MainActivity의 onResume 메서드 실행(2+8), 파일 이름은 ${fileNameToSave}")
+                if(!isSaved && binding.editTextText.text.length != 0) {
+                    // 현재 내용 저장
+                    saveToFile()
+                }
+                Log.d("myCheck", "MainActivity의 onResule 메서드 실행(2), 파일 이름은 ${fileNameToSave}")
+                Log.d("myCheck", "MainActivity의 onResule 메서드 실행(8), 파일 이름은 ${fileNameToOpen}")
+                openSelectedFile()
+            }
+        }
+    }
+
+    override fun onRestart() {
+        // 파일 이름을 입력받기 위해 intent 이동이 생기기 때문에, 돌아오면 onRestart
+        super.onRestart()
+        // sharedpreference 값 확인하기
+        val temp = MyApplication.preferences.getString("MyKey", "")
+        Log.d("myCheck", "SharedPreference에서 MyKey의 값은 ${temp}")
+        //
+        //Toast.makeText(this, "onRestart 실행 [${state}/isSaved=[${isSaved.toString()}]", Toast.LENGTH_SHORT).show()
+        Log.d("myCheck", "MainActivity의 onRestart 메서드 실행, state는 ${state}/isSaved=[${isSaved.toString()}]")
+        Log.d("myCheck", "MainActivity의 onRestart 메서드 실행, 파일 이름은 ${fileNameToSave}")
+    }
+
+    fun getFilenameFromIntent() {
+        // 파일 이름 입력을 위한 Activity 호출
+        filenameActivityResult.launch(intentFilename)
+    }
+
+    fun showFilelistIntent() {
+        filelistActivityResult.launch(intentFilelist)
+    }
+
+    fun saveToFile() {
+        //Toast.makeText(this, "파일 저장한다. ", Toast.LENGTH_SHORT).show()
+        Log.d("myCheck", "파일 저장 시작 - 파일 이름은 ${fileNameToSave}")
+        // editText의 내용을 파일로 저장한다.
+        if(!isSaved) {
+            // 파일 저장 1
+            //val outputFile: FileOutputStream = openFileOutput(fileNameToSave, MODE_PRIVATE)
+            //outputFile.write(binding.editTextText.text.toString().toByteArray())     // 파일로 저장할 때는 ByteArray 타입이어야 한다.
+            //outputFile.close()          // 사용된 파일 닫기
+
+            // 파일 저장 2
+            // base 디렉토리 설정
+            val baseDir =
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString()
+            //var filePath = "${baseDir}/${dateAndTime}"
+            val file = File(baseDir, fileNameToSave)
+            val fos = FileOutputStream(file)
+            fos.write(binding.editTextText.text.toString().toByteArray())
+            fos.close()
+        }
+        // 파일 저장을 마치면 '저장하기' 버튼 비활성화
+        binding.button2.isEnabled = false
+        isSaved = true
+    }
+
+    fun openSelectedFile() {
+        var baseDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).toString()
+
+        var file = baseDir + "/" + fileNameToOpen
+
+        var reader = FileReader(file)
+        var buffer = BufferedReader(reader)
+
+        var temp: String?
+        var readContent: String = ""
+
+        while(true) {
+            temp = buffer.readLine()  // 한 줄을 읽어 temp에 저장
+            if(temp  == null) break
+            else readContent += temp + "\n"
+        }
+        buffer.close()
+        reader.close()
+        Log.d("myCheck", "MainActivity에서 openSelectedFile 메서드 실행")
+        Log.d("myCheck", "읽은 내용은 ${readContent}")
+
+        binding.editTextText.setText( readContent )
+
+    }
+
+}
