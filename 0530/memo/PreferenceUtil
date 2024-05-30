@@ -1,0 +1,18 @@
+package com.android.memo_file
+
+import android.content.Context
+import android.content.SharedPreferences
+
+class PreferenceUtil(context: Context) {
+
+    private val preferences: SharedPreferences =
+        context.getSharedPreferences("prefs_name", Context.MODE_PRIVATE)
+
+    fun getString(key: String, prefs_value: String): String { // 키 값은 항상 String
+        return preferences.getString(key, prefs_value).toString()
+    }
+
+    fun setString(key: String, prefs_value: String) { // 키 값은 항상 String
+        preferences.edit().putString(key, prefs_value).apply()
+    }
+}
