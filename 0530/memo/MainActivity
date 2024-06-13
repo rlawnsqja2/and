@@ -78,7 +78,7 @@ class MainActivity : AppCompatActivity() {
                 Log.d("myCheck", "FileNameActivity에서 돌려준 파일 이름은 ${fileNameToSave}")
             }
         }
-        filelistActivityResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        // filelistActivityResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             // callback 실행 순서가 onRestart() 뒤가 된다.
             if(it.resultCode == RESULT_OK) {
                 fileNameToOpen = it.data?.getStringExtra("fileNameToOpen")?:""
@@ -88,7 +88,7 @@ class MainActivity : AppCompatActivity() {
                 //openSelectedFile()
                 Log.d("myCheck", "FileListActivity에서 돌아오다.")
             }
-        }
+        } 72행부터 91행까지 시험 안나옴
 
         // 이벤트 처리를 위한 함수 등록
         // '새 메모' 버튼
