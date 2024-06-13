@@ -1,0 +1,21 @@
+package kr.ac.dmu.aifinal
+
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import kr.ac.dmu.aifinal.databinding.ActivityFilenameBinding
+
+class FilenameActivity : AppCompatActivity() {
+    lateinit var binding: ActivityFilenameBinding
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        //setContentView(R.layout.activity_filename)
+        binding = ActivityFilenameBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        binding.button.setOnClickListener(){
+            // SharedPreference 에 파일 이름 저장
+            MyApplication.preferences.setString("filename", "abc.txt")
+            finish()
+        }
+    }
+}
