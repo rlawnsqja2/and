@@ -1,0 +1,78 @@
+package kr.ac.dmu.aifinal
+
+import android.content.Intent
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import android.util.Log
+import kr.ac.dmu.aifinal.databinding.ActivityMainBinding
+
+class MainActivity : AppCompatActivity() {
+    lateinit var binding: ActivityMainBinding
+    lateinit var filenameIntent : Intent
+    lateinit var filelistIntent : Intent
+    var state: Int = 1
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        //setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        // intent 객체 변수 초기화
+        filenameIntent = Intent(this, FilenameActivity::class.java)
+        filelistIntent = Intent(this, FilelistActivity::class.java)
+
+        binding.button2.setOnClickListener(){
+            // 새 메모 버튼
+            state = 2
+        }
+
+        binding.button3.setOnClickListener(){
+            // 파일 저장
+            // 파일 이름 받으러 activity 이동 - intent 이동
+            state = 4
+            startActivity(filenameIntent)
+            // activity 이동 코드 아래에 위치한 코드는 실행한다? 안한다?
+            Log.d("myCheck", "MainActivity에서 FilenameActivity로 이동한 문장 바로 뒤")
+        }
+
+        binding.button4.setOnClickListener(){
+            // 파일 열기
+            state = 8
+        }
+
+
+    }
+
+    override fun onRestart(){
+        super.onRestart()
+    }
+
+    override fun onStart(){
+        super.onStart()
+    }
+
+    override fun onResume(){
+        super.onResume()
+
+        when(state){
+            1 -> { // 기본 시작
+                Log.d("myCheck", "기본 시작 상태")
+            }
+            2 -> { // 새 메모 버튼
+                Log.d("myCheck", "새 메모 버튼 클릭한 뒤")
+            }
+            4 -> { // 파일 저장
+                // sharedpreference 읽기
+                val filename = MyApplication.preferences.getString("filename", "")
+                Log.d("myCheck", "파일 이름 입력받고 돌아 왔다.")
+                Log.d("mycheck", "저장할 파일 이름은 ${filename}")
+                // 파일 저장
+
+            }
+            8 -> { // 파일 열기
+                Log.d("myCheck", "파일 목록에서 선택하고 돌아 왔다.")
+                // 선택한 파일 이름으로 파일 열기
+            }
+        }
+    }
+}
