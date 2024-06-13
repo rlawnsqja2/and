@@ -3,3 +3,9 @@ intent 사용보다 SharedPreferences 사용이 편하다
 2개 activity만 사용
 MainActivity, FilelistActivity만 사용
 Filename은 main에서 Fragment (editText, editText Button 사용)
+intent가 3개면 onResume()도 3개이다.
+상태구분 state 번호 1,2,4,8 등의 규칙으로 
+binding.button2.isEnabled = true 로 특정 컴포넌트를 사용가능하게 함 (false 면 사용 못함)
+FilenameActivity에서 putExtra는 key와 value가 쌍으로 들어가며 파이썬의 dict와 비슷한 구조이다
+ fileNameToSave = it.data?.getStringExtra("fileNameToSave")?:"" getStringExtra String 타입 data?는 null이냐 null아니냐 null이면 .뒤에를 실행하지 않은다 ?:은 data가 null이면 ?: 뒤에를 실행
+  ??은 이 변수는 null 일 수 없다.
