@@ -1,0 +1,17 @@
+package kr.ac.dmu.aifinal
+
+import android.app.Application
+import java.util.prefs.Preferences
+
+class MyApplication: Application() {
+
+    companion object {
+        lateinit var preferences: PreferenceUtil
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+        preferences = PreferenceUtil(applicationContext)
+
+    }
+}
