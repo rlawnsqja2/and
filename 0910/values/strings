@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">M02_LayoutView</string>
+    <string name="title">동양 나눔 장터</string>
+    <string name="title1">동양 나눔 등록</string>
+    <string name="link">https://www.dongyang.ac.kr</string>
+    <string name="detail_hint">상품의 상태 등 정보를 입력해 주세요.</string>
+</resources>
