@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">M03_ViewEvent</string>
+    <string name="title">동양 나눔 장터</string>
+    <string name="title1">동양 나눔 등록</string>
+    <string name="link">https://www.dongyang.ac.kr</string>
+    <string name="detail_hint">상품의 상태 등 정보를 입력해 주세요.</string>
+    <string name="price_nego">가격 협의 가능.</string>
+    <string name="no_image">상품이미지가 등록되지 <않></않>았습니다.</string>
+</resources>
