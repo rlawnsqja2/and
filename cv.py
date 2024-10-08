@@ -1,7 +1,6 @@
 import cv2
 import numpy as np
 def enhancement(img):
-    # 0.8380점
     # 작성 할 부분 (GT 이미지 사용시 0점)
     # 1. 화이트 밸런스
     result = cv2.cvtColor(img, cv2.COLOR_BGR2YCrCb)
@@ -49,9 +48,17 @@ def enhancement(img):
     b = (b * 0.6).astype(np.uint8)
     r = (r * 1).astype(np.uint8)
 
-
     # 채널 재결합
     result = cv2.merge((b, g, r))
+
+    hls_image = cv2.cvtColor(result, cv2.COLOR_BGR2HLS)
+
+    # 채도 증가
+    saturation_scale=0.45
+    hls_image[..., 2] = np.clip(hls_image[..., 2] * saturation_scale, 0, 255)
+
+    # 다시 BGR로 변환
+    result = cv2.cvtColor(hls_image, cv2.COLOR_HLS2BGR)
 
      # 5. 색상 강도 조정 (Gamma Correction)
     gamma = 1.55  # 감마 조정값
@@ -65,15 +72,8 @@ def enhancement(img):
     result = (result/ 255) ** g * 255
     result = result.astype(np.uint8)
 
-    b, g, r = cv2.split(result)
-
-    # 초록색 채널 줄이기
-
-
-    
-
-    
 
     return result
 
 
+# 0.8581
