@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 def enhancement(img):
+    # 0.8380점
     # 작성 할 부분 (GT 이미지 사용시 0점)
     # 1. 화이트 밸런스
     result = cv2.cvtColor(img, cv2.COLOR_BGR2YCrCb)
@@ -44,7 +45,9 @@ def enhancement(img):
     b, g, r = cv2.split(result)
 
     # 초록색 채널 줄이기
-    g = (g * 0.5).astype(np.uint8)
+    g = (g * 0.65).astype(np.uint8)
+    b = (b * 0.6).astype(np.uint8)
+    r = (r * 1).astype(np.uint8)
 
 
     # 채널 재결합
@@ -72,7 +75,5 @@ def enhancement(img):
     
 
     return result
-
-#82점짜리
 
 
