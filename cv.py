@@ -39,8 +39,8 @@ def enhancement(img):
     b, g, r = cv2.split(result)
 
     # 초록색 채널 줄이기
-    g = (g * 0.65).astype(np.uint8)
-    b = (b * 0.6).astype(np.uint8)
+    g = (g * 0.77).astype(np.uint8)
+    b = (b * 0.65).astype(np.uint8)
     r = (r * 0.85).astype(np.uint8)
 
     # 채널 재결합
@@ -50,7 +50,7 @@ def enhancement(img):
     # 채도 증가
     result[..., 2] = np.clip(result[..., 2] * 0.45, 0, 255)
 
-    # 다시 RGB로 변환
+    # 다시 RGB로 변환  
     result = cv2.cvtColor(result, cv2.COLOR_HLS2BGR)
     
     
@@ -73,4 +73,4 @@ def enhancement(img):
     return result
 
 
-# 0.8632
+# 0.8649 점
