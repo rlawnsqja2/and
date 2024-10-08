@@ -35,11 +35,8 @@ def enhancement(img):
     result = cv2.merge((h_channel, s_channel, v_channel))
     result = cv2.cvtColor(result, cv2.COLOR_HSV2BGR)
 
-    # 4. 노이즈 감소 (가우시안 블러 사용)
-    result = cv2.GaussianBlur(result, (1, 3), 0.58)  # 커널 크기 조정
-    result = cv2.addWeighted(result, 1.5, result, -0.5, 1)
-
     
+
     # 다른 채널 강조 (예: 파란색과 빨간색을 조금 강조)
     b, g, r = cv2.split(result)
 
@@ -51,15 +48,15 @@ def enhancement(img):
     # 채널 재결합
     result = cv2.merge((b, g, r))
 
-    hls_image = cv2.cvtColor(result, cv2.COLOR_BGR2HLS)
+    result = cv2.cvtColor(result, cv2.COLOR_BGR2HLS)
 
     # 채도 증가
-    saturation_scale=0.45
-    hls_image[..., 2] = np.clip(hls_image[..., 2] * saturation_scale, 0, 255)
+    result[..., 2] = np.clip(result[..., 2] * 0.45, 0, 255)
 
-    # 다시 BGR로 변환
-    result = cv2.cvtColor(hls_image, cv2.COLOR_HLS2BGR)
-
+    # 다시 RGB로 변환
+    result = cv2.cvtColor(result, cv2.COLOR_HLS2BGR)
+    
+    
      # 5. 색상 강도 조정 (Gamma Correction)
     gamma = 1.55  # 감마 조정값
     inv_gamma = 1.0 / gamma
@@ -71,9 +68,12 @@ def enhancement(img):
     result = result.astype(np.float32)
     result = (result/ 255) ** g * 255
     result = result.astype(np.uint8)
-
+    
+    # 4. 노이즈 감소 (가우시안 블러 사용)
+    result = cv2.GaussianBlur(result, (1, 3), 0.58)  # 커널 크기 조정
+    result = cv2.addWeighted(result, 1.5, result, -0.5, 1)
 
     return result
 
 
-# 0.8581
+# 0.8605
