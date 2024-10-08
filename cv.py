@@ -25,7 +25,6 @@ def enhancement(img):
     lab = cv2.merge((cl, a_channel, b_channel))
     result = cv2.cvtColor(lab, cv2.COLOR_LAB2BGR)
 
-    
     # 3. 색상 보정
     result = cv2.cvtColor(result, cv2.COLOR_BGR2HSV)
     h_channel, s_channel, v_channel = cv2.split(result)
@@ -35,7 +34,6 @@ def enhancement(img):
     result = cv2.merge((h_channel, s_channel, v_channel))
     result = cv2.cvtColor(result, cv2.COLOR_HSV2BGR)
 
-    
 
     # 다른 채널 강조 (예: 파란색과 빨간색을 조금 강조)
     b, g, r = cv2.split(result)
@@ -43,11 +41,10 @@ def enhancement(img):
     # 초록색 채널 줄이기
     g = (g * 0.65).astype(np.uint8)
     b = (b * 0.6).astype(np.uint8)
-    r = (r * 1).astype(np.uint8)
+    r = (r * 0.85).astype(np.uint8)
 
     # 채널 재결합
     result = cv2.merge((b, g, r))
-
     result = cv2.cvtColor(result, cv2.COLOR_BGR2HLS)
 
     # 채도 증가
@@ -76,4 +73,4 @@ def enhancement(img):
     return result
 
 
-# 0.8628
+# 0.8632
