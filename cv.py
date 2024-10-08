@@ -70,10 +70,10 @@ def enhancement(img):
     result = result.astype(np.uint8)
     
     # 4. 노이즈 감소 (가우시안 블러 사용)
-    result = cv2.GaussianBlur(result, (1, 3), 0.58)  # 커널 크기 조정
+    result = cv2.GaussianBlur(result, (3, 3), 0.5)  # 커널 크기 조정
     result = cv2.addWeighted(result, 1.5, result, -0.5, 1)
 
     return result
 
 
-# 0.8605
+# 0.8628
